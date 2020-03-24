@@ -20,16 +20,20 @@
     var CONFIG = {"hostname":"carryliu666.github.io","root":"/","scheme":"Pisces","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="tmd给我往死里学">
+  <meta name="description" content="这次的任务:  使用SSD框架进行手部的实时追踪. 环境的搭建说明:笔记本配置是i5 7代,显卡GTX1066(支持CUDA),windows10. 要配置的环境(旧版)  由于object detection api的更新,我后来卡住了,只能装新版:  anaconda3(64位);下个新的就好了.  python3.6;anaconda里面设一个python3.6的环境就好了.  CUDA-9">
 <meta property="og:type" content="article">
 <meta property="og:title" content="HandDetectoin实战">
 <meta property="og:url" content="http://carryliu666.github.io/2020/03/19/HandDetectoin%E5%AE%9E%E6%88%98/index.html">
 <meta property="og:site_name" content="瑞酱学习之路">
-<meta property="og:description" content="tmd给我往死里学">
+<meta property="og:description" content="这次的任务:  使用SSD框架进行手部的实时追踪. 环境的搭建说明:笔记本配置是i5 7代,显卡GTX1066(支持CUDA),windows10. 要配置的环境(旧版)  由于object detection api的更新,我后来卡住了,只能装新版:  anaconda3(64位);下个新的就好了.  python3.6;anaconda里面设一个python3.6的环境就好了.  CUDA-9">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-03-19T06:49:04.000Z">
-<meta property="article:modified_time" content="2020-03-19T06:49:04.976Z">
+<meta property="article:modified_time" content="2020-03-23T16:14:39.261Z">
 <meta property="article:author" content="Liu Kairui">
+<meta property="article:tag" content="Pytorch">
+<meta property="article:tag" content="动态手势">
+<meta property="article:tag" content="机器视觉">
+<meta property="article:tag" content="SSD">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://carryliu666.github.io/2020/03/19/HandDetectoin%E5%AE%9E%E6%88%98/">
@@ -183,6 +187,26 @@
 
               <time title="创建时间：2020-03-19 14:49:04" itemprop="dateCreated datePublished" datetime="2020-03-19T14:49:04+08:00">2020-03-19</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-24 00:14:39" itemprop="dateModified" datetime="2020-03-24T00:14:39+08:00">2020-03-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%82%8C%E7%94%B5/" itemprop="url" rel="index"><span itemprop="name">肌电</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%82%8C%E7%94%B5/%E5%8A%A8%E6%80%81%E6%89%8B%E5%8A%BF/" itemprop="url" rel="index"><span itemprop="name">动态手势</span></a>
+                </span>
+            </span>
 
           
 
@@ -195,7 +219,42 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <p>这次的任务:  使用SSD框架进行手部的实时追踪.</p>
+<h3 id="环境的搭建"><a href="#环境的搭建" class="headerlink" title="环境的搭建"></a>环境的搭建</h3><p>说明:笔记本配置是i5 7代,显卡GTX1066(支持CUDA),windows10.</p>
+<h3 id="要配置的环境-旧版"><a href="#要配置的环境-旧版" class="headerlink" title="要配置的环境(旧版)"></a>要配置的环境(旧版)</h3><p>  <strong>由于object detection api的更新,我后来卡住了,只能装新版:</strong></p>
+<ol>
+<li><p>anaconda3(64位);下个新的就好了.</p>
+</li>
+<li><p>python3.6;anaconda里面设一个python3.6的环境就好了.</p>
+</li>
+<li><p>CUDA-9.1; 下载地址<a href="https://developer.nvidia.com/cuda-toolkit-archive" target="_blank" rel="noopener">https://developer.nvidia.com/cuda-toolkit-archive</a> 安装完后下载下面的(<strong>会自动添加环境变量</strong>)</p>
+</li>
+<li><p>CuDNN-7.0.5;下载地址<a href="https://developer.nvidia.com/rdp/cudnn-archive" target="_blank" rel="noopener">https://developer.nvidia.com/rdp/cudnn-archive</a> ，在下载CUDNN7.0.5之前，需要登录NVIDIA账号，没有的话要注册登录后才能下载. <strong>注意添加环境变量</strong></p>
+</li>
+<li><p>TensorFlow-gpu(1.4.0版本):从网站:<a href="https://github.com/fo40225/tensorflow-windows-wheel" target="_blank" rel="noopener">https://github.com/fo40225/tensorflow-windows-wheel</a> 下载特定版本的whl文件,之后在conda环境里用(比如)<code>pip install tensorflow_gpu-1.4.0-cp36-cp36m-win_amd64.whl</code></p>
+</li>
+</ol>
+<h4 id="新版环境-成功了"><a href="#新版环境-成功了" class="headerlink" title="新版环境(成功了):"></a>新版环境(成功了):</h4><ol>
+<li><p>anaconda3(64位);下个新的就好了.</p>
+</li>
+<li><p>python3.7;anaconda里面设一个python3.7的环境就好了.</p>
+</li>
+<li><p>CUDA10.1+cuDNN7.6;</p>
+</li>
+<li><p>tensorflow2.1.0;</p>
+</li>
+<li><p>object detection api; 参考<a href="https://www.youtube.com/watch?v=qDm_YOwP2zY" target="_blank" rel="noopener">https://www.youtube.com/watch?v=qDm_YOwP2zY</a></p>
+</li>
+</ol>
+<h3 id="需要学习的技能"><a href="#需要学习的技能" class="headerlink" title="需要学习的技能"></a>需要学习的技能</h3><ol>
+<li>TensorFlow’s Object Detector API</li>
+</ol>
+<h3 id="对egohands数据集的介绍和工作"><a href="#对egohands数据集的介绍和工作" class="headerlink" title="对egohands数据集的介绍和工作"></a>对egohands数据集的介绍和工作</h3><p>&ensp;&ensp;&ensp;&ensp;首先egohands数据集里有48个不同场景的文件夹,每个文件夹有100张图片,每张图片的手部都进行了标注,每个图片分别有四个label,分别是 myleft,myright,yourleft,yourright.对应我和你的四只手是否有出现.对于出现的手进行了标注,根据 <a href="https://github.com/victordibia/handtracking" target="_blank" rel="noopener">https://github.com/victordibia/handtracking</a> 提供的工具,成功实现了4个类别的mat to csv.接下来使用<code>generate_tfrecord.py</code>将csv转成tfrecord格式( 指导视频:<a href="https://pythonprogramming.net/creating-tfrecord-files-tensorflow-object-detection-api-tutorial/" target="_blank" rel="noopener">https://pythonprogramming.net/creating-tfrecord-files-tensorflow-object-detection-api-tutorial/</a> )</p>
+<h3 id="训练模型"><a href="#训练模型" class="headerlink" title="训练模型"></a>训练模型</h3><p>训练自己的模型or使用迁移学习拿别的数据集的成果进行参数训练,我选择后者,选择使用GPU训练,比cpu大概快10倍</p>
+<ol>
+<li>我选择了ssd_mobilenet_v2_coco的</li>
+</ol>
+
     </div>
 
     
@@ -203,6 +262,12 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Pytorch/" rel="tag"># Pytorch</a>
+              <a href="/tags/%E5%8A%A8%E6%80%81%E6%89%8B%E5%8A%BF/" rel="tag"># 动态手势</a>
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/" rel="tag"># 机器视觉</a>
+              <a href="/tags/SSD/" rel="tag"># SSD</a>
+          </div>
 
         
 
@@ -213,7 +278,10 @@
     <a href="/2020/03/18/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%8403-%E5%A0%86%E6%A0%88/" rel="prev" title="数据结构03-堆栈">
       <i class="fa fa-chevron-left"></i> 数据结构03-堆栈
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/03/23/%E6%9D%82%E9%A1%B9%E4%BD%93%E9%AA%8C/" rel="next" title="杂项体验">
+      杂项体验 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -273,6 +341,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#环境的搭建"><span class="nav-number">1.</span> <span class="nav-text">环境的搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#要配置的环境-旧版"><span class="nav-number">2.</span> <span class="nav-text">要配置的环境(旧版)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#新版环境-成功了"><span class="nav-number">2.1.</span> <span class="nav-text">新版环境(成功了):</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#需要学习的技能"><span class="nav-number">3.</span> <span class="nav-text">需要学习的技能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对egohands数据集的介绍和工作"><span class="nav-number">4.</span> <span class="nav-text">对egohands数据集的介绍和工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#训练模型"><span class="nav-number">5.</span> <span class="nav-text">训练模型</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -288,20 +357,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

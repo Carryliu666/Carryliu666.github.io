@@ -156,6 +156,77 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://carryliu666.github.io/2020/03/23/%E6%9D%82%E9%A1%B9%E4%BD%93%E9%AA%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.png">
+      <meta itemprop="name" content="Liu Kairui">
+      <meta itemprop="description" content="tmd给我往死里学">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="瑞酱学习之路">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/23/%E6%9D%82%E9%A1%B9%E4%BD%93%E9%AA%8C/" class="post-title-link" itemprop="url">杂项体验</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-23 18:23:00 / 修改时间：20:49:32" itemprop="dateCreated datePublished" datetime="2020-03-23T18:23:00+08:00">2020-03-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="华为软件挑战赛"><a href="#华为软件挑战赛" class="headerlink" title="华为软件挑战赛"></a>华为软件挑战赛</h3><p>数据集说明:用于预测用户是否会按时偿还贷款的数据集.华为说是对其进行过了特征工程处理,然后就给了一个8000x1000的数据集,label只有0和1,是一个二分类问题.不能使用外部机器学习库,只能自己写.</p>
+<p>折腾了一个下午,我使用KNN进行了尝试,初步准确率是57.9%, 70%以上才能算分, 日了狗.先这样吧,干别的活去了.</p>
+<p>代码如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">operator</span></span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> numpy as np</span><br><span class="line">from os <span class="keyword">import</span> listdir</span><br><span class="line">#train_data:(<span class="number">8000</span>x1001) data in <span class="built_in">end</span> column are labels</span><br><span class="line">#test_data:(<span class="number">2000</span>x1000)  answer:(<span class="number">2000</span>,)</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KNN</span>:</span></span><br><span class="line">    def __init__(self,train_file_name, test_file_name, predict_result_file_name):</span><br><span class="line">        self.dataSet = train_file_name[:,:<span class="number">-1</span>]</span><br><span class="line">        self.inX = test_file_name</span><br><span class="line">        self.lapredict_result_file_namebels = predict_result_file_name</span><br><span class="line">        self.train_labels=train_file_name[:,<span class="number">-1</span>]</span><br><span class="line">        self.predict_result=[]</span><br><span class="line">    def classify0(self, k):</span><br><span class="line">        dataSetSize = self.dataSet.shape[<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">for</span> j in range(self.inX.shape[<span class="number">0</span>]):</span><br><span class="line">            diffMat = np.tile(self.inX[j,:], (dataSetSize, <span class="number">1</span>)) - self.dataSet</span><br><span class="line">            #diffMat = tile(self.inX[<span class="number">0</span>,:], (dataSetSize, <span class="number">1</span>)) - self.dataSet</span><br><span class="line">            sqDiffMat = diffMat ** <span class="number">2</span></span><br><span class="line">            sqDistances = sqDiffMat.sum(axis=<span class="number">1</span>)</span><br><span class="line">            distances = sqDistances ** <span class="number">0.5</span></span><br><span class="line">            sortedDistIndicies = distances.argsort()</span><br><span class="line">            classCount = &#123;&#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> i in range(k):</span><br><span class="line">                voteIlabel = self.train_labels[sortedDistIndicies[i]]</span><br><span class="line">                classCount[voteIlabel] = classCount.<span class="built_in">get</span>(voteIlabel, <span class="number">0</span>) + <span class="number">1</span></span><br><span class="line">            #Big to small (reverse = True)</span><br><span class="line">            sortedClassCount = sorted(classCount.items(), key=<span class="keyword">operator</span>.itemgetter(<span class="keyword">int</span>((k<span class="number">-1</span>)/<span class="number">2</span>)), reverse=True)</span><br><span class="line"></span><br><span class="line">            self.predict_result.append(sortedClassCount[<span class="number">0</span>][<span class="number">0</span>])</span><br><span class="line">        <span class="keyword">return</span> self.predict_result</span><br><span class="line">    def save_prediction_file(self,prediction_result):</span><br><span class="line">        <span class="built_in">print</span>(prediction_result)</span><br><span class="line">        f = <span class="built_in">open</span>(self.predict_result_file_name, <span class="string">'w'</span>)</span><br><span class="line">        <span class="keyword">for</span> i in range(len(self.labels_predict)):</span><br><span class="line">            f.<span class="built_in">write</span>(str(self.labels_predict[i]) + <span class="string">"\n"</span>)</span><br><span class="line">        f.<span class="built_in">close</span>()</span><br><span class="line"></span><br><span class="line">def print_help_and_exit():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"usage:python3 main.py train_data.txt test_data.txt predict.txt [debug]"</span>)</span><br><span class="line">    sys.<span class="built_in">exit</span>(<span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def parse_args():</span><br><span class="line">    debug = False</span><br><span class="line">    <span class="keyword">if</span> len(sys.argv) == <span class="number">2</span>:</span><br><span class="line">        if sys.argv[1] == 'debug':</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">"test mode"</span>)</span><br><span class="line">            debug = True</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print_help_and_exit()</span><br><span class="line">    <span class="keyword">return</span> debug</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    debug = parse_args()</span><br><span class="line">    train_data = np.loadtxt(<span class="string">"data/train_data.txt"</span>, delimiter=<span class="string">','</span>)</span><br><span class="line">    test_data = np.loadtxt(<span class="string">"data/test_data.txt"</span>, delimiter=<span class="string">','</span>)</span><br><span class="line">    answer = np.loadtxt("data/answer.txt", encoding='utf-8', delimiter='\n')</span><br><span class="line">    predict_file = <span class="string">"/projects/student/result.txt"</span></span><br><span class="line">    knn=KNN(train_data,test_data,answer)</span><br><span class="line">    predict=knn.classify0(<span class="number">3</span>)</span><br><span class="line">    predict=np.<span class="built_in">array</span>(predict)</span><br><span class="line">    predict_acc=<span class="number">1</span>-np.sum(np.<span class="built_in">abs</span>(predict-answer))/predict.shape[<span class="number">0</span>]</span><br><span class="line">    <span class="built_in">print</span>(predict_acc)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://carryliu666.github.io/2020/03/19/HandDetectoin%E5%AE%9E%E6%88%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -182,6 +253,26 @@
 
               <time title="创建时间：2020-03-19 14:49:04" itemprop="dateCreated datePublished" datetime="2020-03-19T14:49:04+08:00">2020-03-19</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-24 00:14:39" itemprop="dateModified" datetime="2020-03-24T00:14:39+08:00">2020-03-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%82%8C%E7%94%B5/" itemprop="url" rel="index"><span itemprop="name">肌电</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%82%8C%E7%94%B5/%E5%8A%A8%E6%80%81%E6%89%8B%E5%8A%BF/" itemprop="url" rel="index"><span itemprop="name">动态手势</span></a>
+                </span>
+            </span>
 
           
 
@@ -194,7 +285,42 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <p>这次的任务:  使用SSD框架进行手部的实时追踪.</p>
+<h3 id="环境的搭建"><a href="#环境的搭建" class="headerlink" title="环境的搭建"></a>环境的搭建</h3><p>说明:笔记本配置是i5 7代,显卡GTX1066(支持CUDA),windows10.</p>
+<h3 id="要配置的环境-旧版"><a href="#要配置的环境-旧版" class="headerlink" title="要配置的环境(旧版)"></a>要配置的环境(旧版)</h3><p>  <strong>由于object detection api的更新,我后来卡住了,只能装新版:</strong></p>
+<ol>
+<li><p>anaconda3(64位);下个新的就好了.</p>
+</li>
+<li><p>python3.6;anaconda里面设一个python3.6的环境就好了.</p>
+</li>
+<li><p>CUDA-9.1; 下载地址<a href="https://developer.nvidia.com/cuda-toolkit-archive" target="_blank" rel="noopener">https://developer.nvidia.com/cuda-toolkit-archive</a> 安装完后下载下面的(<strong>会自动添加环境变量</strong>)</p>
+</li>
+<li><p>CuDNN-7.0.5;下载地址<a href="https://developer.nvidia.com/rdp/cudnn-archive" target="_blank" rel="noopener">https://developer.nvidia.com/rdp/cudnn-archive</a> ，在下载CUDNN7.0.5之前，需要登录NVIDIA账号，没有的话要注册登录后才能下载. <strong>注意添加环境变量</strong></p>
+</li>
+<li><p>TensorFlow-gpu(1.4.0版本):从网站:<a href="https://github.com/fo40225/tensorflow-windows-wheel" target="_blank" rel="noopener">https://github.com/fo40225/tensorflow-windows-wheel</a> 下载特定版本的whl文件,之后在conda环境里用(比如)<code>pip install tensorflow_gpu-1.4.0-cp36-cp36m-win_amd64.whl</code></p>
+</li>
+</ol>
+<h4 id="新版环境-成功了"><a href="#新版环境-成功了" class="headerlink" title="新版环境(成功了):"></a>新版环境(成功了):</h4><ol>
+<li><p>anaconda3(64位);下个新的就好了.</p>
+</li>
+<li><p>python3.7;anaconda里面设一个python3.7的环境就好了.</p>
+</li>
+<li><p>CUDA10.1+cuDNN7.6;</p>
+</li>
+<li><p>tensorflow2.1.0;</p>
+</li>
+<li><p>object detection api; 参考<a href="https://www.youtube.com/watch?v=qDm_YOwP2zY" target="_blank" rel="noopener">https://www.youtube.com/watch?v=qDm_YOwP2zY</a></p>
+</li>
+</ol>
+<h3 id="需要学习的技能"><a href="#需要学习的技能" class="headerlink" title="需要学习的技能"></a>需要学习的技能</h3><ol>
+<li>TensorFlow’s Object Detector API</li>
+</ol>
+<h3 id="对egohands数据集的介绍和工作"><a href="#对egohands数据集的介绍和工作" class="headerlink" title="对egohands数据集的介绍和工作"></a>对egohands数据集的介绍和工作</h3><p>&ensp;&ensp;&ensp;&ensp;首先egohands数据集里有48个不同场景的文件夹,每个文件夹有100张图片,每张图片的手部都进行了标注,每个图片分别有四个label,分别是 myleft,myright,yourleft,yourright.对应我和你的四只手是否有出现.对于出现的手进行了标注,根据 <a href="https://github.com/victordibia/handtracking" target="_blank" rel="noopener">https://github.com/victordibia/handtracking</a> 提供的工具,成功实现了4个类别的mat to csv.接下来使用<code>generate_tfrecord.py</code>将csv转成tfrecord格式( 指导视频:<a href="https://pythonprogramming.net/creating-tfrecord-files-tensorflow-object-detection-api-tutorial/" target="_blank" rel="noopener">https://pythonprogramming.net/creating-tfrecord-files-tensorflow-object-detection-api-tutorial/</a> )</p>
+<h3 id="训练模型"><a href="#训练模型" class="headerlink" title="训练模型"></a>训练模型</h3><p>训练自己的模型or使用迁移学习拿别的数据集的成果进行参数训练,我选择后者,选择使用GPU训练,比cpu大概快10倍</p>
+<ol>
+<li>我选择了ssd_mobilenet_v2_coco的</li>
+</ol>
+
       
     </div>
 
@@ -239,6 +365,22 @@
 
               <time title="创建时间：2020-03-18 23:29:06" itemprop="dateCreated datePublished" datetime="2020-03-18T23:29:06+08:00">2020-03-18</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-21 21:23:01" itemprop="dateModified" datetime="2020-03-21T21:23:01+08:00">2020-03-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">数据结构</span></a>
+                </span>
+            </span>
 
           
 
@@ -251,7 +393,17 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <h2 id="堆栈-Stack"><a href="#堆栈-Stack" class="headerlink" title="堆栈(Stack)"></a>堆栈(Stack)</h2><h3 id="中缀表达式"><a href="#中缀表达式" class="headerlink" title="中缀表达式"></a>中缀表达式</h3><p>这个简单,常理推就好了:a+b*c-d/e;</p>
+<h3 id="后缀表达式"><a href="#后缀表达式" class="headerlink" title="后缀表达式"></a>后缀表达式</h3><p>&ensp;abc*+de/-</p>
+<p>=a<u>(b*c)</u>+de/-</p>
+<p>=<u>a+(b*c)</u>de/-</p>
+<p>=<u>a+(b*c)</u><u>d/e</u>-</p>
+<p>=a+b*c-d/e</p>
+<h4 id="后缀表达式的策略"><a href="#后缀表达式的策略" class="headerlink" title="后缀表达式的策略"></a>后缀表达式的策略</h4><p>从左向右扫描，逐个处理运算数和运算符号，当碰到<strong>运算数</strong>时就记住，当碰到<strong>运算符号</strong>时，就把最近记住的两个数字拿来运算。</p>
+<p><font color="red" size="5">特点</font>:<br>先放进去后拿出来，后放进去的先拿出来运算(后入先出:Last In First Out,<strong>LIFO</strong>)</p>
+<p>插入数据:入栈(Push)<br>删除数据:出站(Pop)</p>
+<h3 id="前缀表达式同理"><a href="#前缀表达式同理" class="headerlink" title="前缀表达式同理"></a>前缀表达式同理</h3><p>可以推断出前缀表达式为:&ensp;-+a*bc/de</p>
+
       
     </div>
 
@@ -396,7 +548,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-19 14:46:45" itemprop="dateModified" datetime="2020-03-19T14:46:45+08:00">2020-03-19</time>
+                <time title="修改时间：2020-03-20 12:39:00" itemprop="dateModified" datetime="2020-03-20T12:39:00+08:00">2020-03-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -424,7 +576,7 @@
 
       
           <p>本次学习的博客:<a href="https://blog.csdn.net/sinat_34328764/article/details/84192303" target="_blank" rel="noopener">https://blog.csdn.net/sinat_34328764/article/details/84192303</a></p>
-<h2 id="从谷歌的handtracking介绍出发"><a href="#从谷歌的handtracking介绍出发" class="headerlink" title="从谷歌的handtracking介绍出发"></a><strong>从谷歌的handtracking介绍出发</strong></h2><p>可以分为三个内容:<br>1:&ensp;SSD(single shot multibox detector)用于物体检测<br>2:&ensp;手部标记模型<br>3.&ensp;Gesture Recognition</p>
+<h2 id="从谷歌的handtracking结构出发"><a href="#从谷歌的handtracking结构出发" class="headerlink" title="从谷歌的handtracking结构出发"></a><strong>从谷歌的handtracking结构出发</strong></h2><p>可以分为三个内容:<br>1:&ensp;SSD(single shot multibox detector)用于物体检测<br>2:&ensp;手部标记模型<br>3.&ensp;Gesture Recognition</p>
 <p>这一章从第一个SSD开始学起;而对于这块内容,首先就要掌握CNN(卷积神经网络)基础</p>
 <h3 id="卷积神经网络要点"><a href="#卷积神经网络要点" class="headerlink" title="卷积神经网络要点"></a>卷积神经网络要点</h3><p><font color="red" size="3"> 要点</font>:</p>
 <p><strong>zero-padding</strong>的用处:对于图像靠近中间部分的像素,会被 “重叠” 地计算很多次，相比之下，边缘地像素呢？只被计算了一次，这有点太不公平了啊。怎么让它也能享受到 多次计算呢？就是在边缘填充一些值这样就好了嘛：</p>
@@ -863,74 +1015,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://carryliu666.github.io/2020/03/08/p02/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.png">
-      <meta itemprop="name" content="Liu Kairui">
-      <meta itemprop="description" content="tmd给我往死里学">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="瑞酱学习之路">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/08/p02/" class="post-title-link" itemprop="url">mediapipe</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-03-08 15:29:45 / 修改时间：15:39:25" itemprop="dateCreated datePublished" datetime="2020-03-08T15:29:45+08:00">2020-03-08</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/midiapipe/" itemprop="url" rel="index"><span itemprop="name">midiapipe</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>ssss</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1003,20 +1087,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
